@@ -1,31 +1,34 @@
 from django.db import models
 
-NULLABLE = {"blank": True, "null": True}
+NULLABLE = {"null": True, "blank": True}
 
 
 class Course(models.Model):
-    title = models.CharField(max_length=100, verbose_name="Title")
-    image = models.ImageField(
-        upload_to="materials/images", verbose_name="Image", **NULLABLE
+    title = models.CharField(max_length=50, verbose_name="название")
+    description = models.TextField(verbose_name="описание")
+    pre_view = models.ImageField(
+        upload_to="course/", verbose_name="превью ", **NULLABLE
     )
-    description = models.TextField(verbose_name="Description", **NULLABLE)
+
+    def __str__(self):
+        return f"{self.title}, {self.description}"
 
     class Meta:
-        verbose_name = "Course"
-        verbose_name_plural = "Courses"
+        verbose_name = "Курс"
+        verbose_name_plural = "Курсы"
+        ordering = ("title",)
 
 
 class Lesson(models.Model):
-    title = models.CharField(max_length=100, verbose_name="Title")
-    description = models.TextField(verbose_name="Description", **NULLABLE)
-    image = models.ImageField(
-        upload_to="materials/images", verbose_name="Image", **NULLABLE
-    )
-    link = models.URLField(verbose_name="Link", **NULLABLE)
-    course = models.ForeignKey(
-        Course, on_delete=models.CASCADE, verbose_name="Course", **NULLABLE
-    )
+    title = models.CharField(max_length=50, verbose_name="навзвание")
+    description = models.TextField(verbose_name="описание")
+    pre_view = models.ImageField(upload_to="lesson/", verbose_name="превью", **NULLABLE)
+    video_url = models.URLField(verbose_name="ссылка на видео", **NULLABLE)
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, verbose_name="Курс")
+
+    def __str__(self):
+        return f"{self.title}, {self.description}"
 
     class Meta:
-        verbose_name = "Lesson"
-        verbose_name_plural = "Lessons"
+        verbose_name = "Урок"
+        verbose_name_plural = "Уроки"
