@@ -1,19 +1,22 @@
 from rest_framework.fields import SerializerMethodField
 from rest_framework.serializers import ModelSerializer
 
-from materials.models import Course, Lesson
+from materials.models import Course, Lesson, Subscription
+from materials.validators import Validatorlink
 
 
 class CourseSerializer(ModelSerializer):
     class Meta:
         model = Course
         fields = "__all__"
+        validators = [Validatorlink(field='slug')]
 
 
 class LessonSerializer(ModelSerializer):
     class Meta:
         model = Lesson
         fields = "__all__"
+        validators = [Validatorlink(field='slug')]
 
 
 class CourseDetailSerializer(ModelSerializer):
@@ -30,3 +33,9 @@ class CourseDetailSerializer(ModelSerializer):
     class Meta:
         model = Course
         fields = ("title", "description", "lesson_in_course", "lesson_set")
+
+
+class SubscriptionSerializer(ModelSerializer):
+    class Meta:
+        model = Subscription
+        fields = "__all__"

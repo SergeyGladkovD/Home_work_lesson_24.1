@@ -1,14 +1,18 @@
 from rest_framework import generics, viewsets
+from rest_framework.generics import get_object_or_404
 from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 
-from materials.models import Course, Lesson
+from materials.models import Course, Lesson, Subscription
+from materials.paginators import CustomPagination
 from materials.serializers import (CourseDetailSerializer, CourseSerializer,
-                                   LessonSerializer)
+                                   LessonSerializer, SubscriptionSerializer)
 from users.permissions import IsModerator, IsOwner
 
 
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
+    pagination_class = CustomPagination
 
     def get_serializer_class(self):
         if self.action == "retrieve":
@@ -42,36 +46,50 @@ class LessonCreateAPIView(generics.CreateAPIView):
 class LessonListAPIView(generics.ListAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
-    permission_classes = (
-        ~IsModerator,
-        IsAuthenticated,
-    )
+    # permission_classes = (
+    #     ~IsModerator,
+    #     IsAuthenticated,)
+    # pagination_class = CustomPagination
 
 
 class LessonRetrieveAPIView(generics.RetrieveAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
-    permission_classes = (
-        IsAuthenticated,
-        IsModerator,
-        IsOwner,
-    )
+    # permission_classes = (
+    #     IsAuthenticated,
+    #     IsModerator,
+    #     IsOwner,)
 
 
 class LessonUpdateAPIView(generics.UpdateAPIView):
     serializer_class = LessonSerializer
     queryset = Lesson.objects.all()
-    permission_classes = (
-        IsAuthenticated,
-        IsModerator,
-        IsOwner,
-    )
+    # permission_classes = (
+    #     IsAuthenticated,
+    #     IsModerator,
+    #     IsOwner,)
 
 
 class LessonDestroyAPIView(generics.DestroyAPIView):
     queryset = Lesson.objects.all()
-    permission_classes = (
-        IsAuthenticated,
-        ~IsModerator,
-        IsOwner,
-    )
+    # permission_classes = (
+    #     IsAuthenticated,
+    #     ~IsModerator,
+    #     IsOwner,)
+
+
+class SubscriptionCreateApiView(generics.CreateAPIView):
+    def post(self, *args, **kwargs):
+        user = self.request.user
+        course_id = self.request.data.get("course")
+        course_item = get_object_or_404(Course, pk=course_id)
+
+        subs_item = Subscription.objects.filter(user=user, course=course_item)
+
+        if subs_item.exists():
+            subs_item.delete()
+            message = "подписка удалена"
+        else:
+            Subscription.objects.create(user=user, course=course_item)
+            message = "подписка добавлена"
+        return Response({"message": message})
