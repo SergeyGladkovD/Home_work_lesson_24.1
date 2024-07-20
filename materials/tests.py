@@ -10,7 +10,7 @@ class LessonTestCase(APITestCase):
     def setUp(self):
         self.user = User.objects.create(email="admin@mail.ru")
         self.course = Course.objects.create(title="Test Course", description="Test Course")
-        self.lesson = Lesson.objects.create(title="Test Lesson", description="Test Lesson")
+        self.lesson = Lesson.objects.create(title="Test Lesson", description="Test Lesson", course=self.course)
         self.client.force_authenticate(user=self.user)
 
     def test_lesson_create(self):
@@ -23,6 +23,9 @@ class LessonTestCase(APITestCase):
         response = self.client.post(url, data=data, format='json')
         self.assertEqual(Lesson.objects.all().count(), 2)
         self.assertEqual(response.status_code,status.HTTP_201_CREATED)
+        self.assertEqual(response.data['title'], "Test")
+        self.assertEqual(response.data['description'], "Test")
+        self.assertEqual(response.data['course'], self.course.pk)
 
     def test_lesson_retrieve(self):
         url = reverse("materials:lesson_get", args=(self.lesson.pk,))
@@ -49,7 +52,8 @@ class LessonTestCase(APITestCase):
         url = reverse("materials:lesson_list")
         response = self.client.get(url)
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data, [{'id': 4, 'title': 'Test Lesson', 'description': 'Test Lesson', 'pre_view': None, 'video_url': None, 'course': None, 'owner': None}])
+        self.assertEqual(response.data['count'], 1)
+
 
 
 class SubscriptionTestCase(APITestCase):
