@@ -55,13 +55,12 @@ class LessonTestCase(APITestCase):
         self.assertEqual(response.data['count'], 1)
 
 
-
 class SubscriptionTestCase(APITestCase):
     def setUp(self):
         self.user = User.objects.create(email="admin@mail.ru")
         self.client.force_authenticate(user=self.user)
         self.course = Course.objects.create(title="Test Course", description="Test Course")
-        self.lesson = Lesson.objects.create(title="Test Lesson", description="Test Lesson")
+        self.lesson = Lesson.objects.create(title="Test Lesson", description="Test Lesson", course=self.course)
         self.url = reverse("materials:subscriptions")
 
     def test_subscriptions_create(self):
