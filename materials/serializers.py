@@ -9,14 +9,14 @@ class CourseSerializer(ModelSerializer):
     class Meta:
         model = Course
         fields = "__all__"
-        validators = [Validatorlink(field='video_url')]
+        validators = [Validatorlink(field="video_url")]
 
 
 class LessonSerializer(ModelSerializer):
     class Meta:
         model = Lesson
         fields = "__all__"
-        validators = [Validatorlink(field='video_url')]
+        validators = [Validatorlink(field="video_url")]
 
 
 class CourseDetailSerializer(ModelSerializer):
@@ -29,7 +29,13 @@ class CourseDetailSerializer(ModelSerializer):
     #     return [lesson.name for lesson in Lesson.objects.filter(course=course)]
     class Meta:
         model = Course
-        fields = ("title", "description", "lesson_in_course", "lesson_set", 'subscription')
+        fields = (
+            "title",
+            "description",
+            "lesson_in_course",
+            "lesson_set",
+            "subscription",
+        )
 
     def get_is_subscription(self, course):
         return Subscription.objects.filter(
