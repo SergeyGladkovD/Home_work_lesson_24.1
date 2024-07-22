@@ -80,6 +80,7 @@ class LessonDestroyAPIView(generics.DestroyAPIView):
 
 class SubscriptionCreateApiView(generics.CreateAPIView):
     serializer_class = SubscriptionSerializer
+
     def post(self, *args, **kwargs):
         user = self.request.user
         course_id = self.request.data.get("course")

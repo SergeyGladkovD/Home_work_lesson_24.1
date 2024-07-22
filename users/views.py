@@ -8,7 +8,8 @@ from rest_framework.permissions import AllowAny
 from materials.models import Course, Lesson
 from users.models import Payment, User
 from users.serializers import PaymentSerializer, UserSerializer
-from users.services import create_stripe_product, create_stripe_price, create_stripe_session, checkout_session
+from users.services import (checkout_session, create_stripe_price,
+                            create_stripe_product, create_stripe_session)
 
 
 class UserCreateApiView(CreateAPIView):
@@ -56,15 +57,23 @@ class PaymentCreateApiView(CreateAPIView):
         instance = serializer.save()
         instance.user = self.request.user
 
-        course_id = self.request.data.get('paid_course')
-        lesson_id = self.request.data.get('paid_lesson')
+        course_id = self.request.data.get("paid_course")
+        lesson_id = self.request.data.get("paid_lesson")
         if course_id:
-            course_product = create_stripe_product(Course.objects.get(pk=course_id).name)
-            course_price = create_stripe_price(instance.paid_course.amount, course_product)
+            course_product = create_stripe_product(
+                Course.objects.get(pk=course_id).name
+            )
+            course_price = create_stripe_price(
+                instance.paid_course.amount, course_product
+            )
             session_id, payment_link = create_stripe_session(course_price, instance.pk)
         else:
-            lesson_product = create_stripe_product(Lesson.objects.get(pk=lesson_id).name)
-            lesson_price = create_stripe_price(instance.paid_lesson.amount, lesson_product)
+            lesson_product = create_stripe_product(
+                Lesson.objects.get(pk=lesson_id).name
+            )
+            lesson_price = create_stripe_price(
+                instance.paid_lesson.amount, lesson_product
+            )
             session_id, payment_link = create_stripe_session(lesson_price, instance.pk)
 
         payment_status = checkout_session(session_id)

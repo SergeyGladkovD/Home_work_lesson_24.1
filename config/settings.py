@@ -42,7 +42,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     "rest_framework_simplejwt",
-    'drf_yasg',
+    "drf_yasg",
     "django_filters",
     "rest_framework",
     "users",
@@ -148,5 +148,5 @@ SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=30),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=1),
 }
-STRIPE_API_KEY = os.getenv('STRIPE_API_KEY')
-DOMAIN_NAME = os.getenv('DOMAIN_NAME')
+STRIPE_API_KEY = os.getenv("STRIPE_API_KEY")
+DOMAIN_NAME = os.getenv("DOMAIN_NAME")
