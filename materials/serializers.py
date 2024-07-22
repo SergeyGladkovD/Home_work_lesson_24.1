@@ -29,7 +29,7 @@ class CourseDetailSerializer(ModelSerializer):
     #     return [lesson.name for lesson in Lesson.objects.filter(course=course)]
     class Meta:
         model = Course
-        fields = ("title", "description", "lesson_in_course", "lesson_set")
+        fields = ("title", "description", "lesson_in_course", "lesson_set", 'subscription')
 
     def get_is_subscription(self, course):
         return Subscription.objects.filter(
