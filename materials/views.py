@@ -8,7 +8,7 @@ from materials.paginators import CustomPagination
 from materials.serializers import (CourseDetailSerializer, CourseSerializer,
                                    LessonSerializer, SubscriptionSerializer)
 from users.permissions import IsModerator, IsOwner
-
+from materials.tasks import send_updates
 
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
@@ -23,6 +23,12 @@ class CourseViewSet(viewsets.ModelViewSet):
         course = serializer.save()
         course.owner = self.request.user
         course.save()
+
+    def perform_update(self, serializer):
+        """ Запускает send_updates при редактировании курса. """
+        instance = serializer.save()
+        send_updates.delay(instance.pk)
+        instance.save()
 
     def get_permissions(self):
         if self.action == "create":
