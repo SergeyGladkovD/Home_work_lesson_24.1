@@ -10,6 +10,7 @@ from materials.serializers import (CourseDetailSerializer, CourseSerializer,
 from users.permissions import IsModerator, IsOwner
 from materials.tasks import send_updates
 
+
 class CourseViewSet(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     pagination_class = CustomPagination
